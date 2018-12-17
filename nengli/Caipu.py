@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # author: wt
-# date: '2018/12/14 0014 14:30'
+# date: '2018/12/17 0017 14:14'
 
 
-class Zhinan(object):
+class Caipu(object):
 
     def __init__(self):
         super().__init__()
