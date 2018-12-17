@@ -110,6 +110,7 @@ class HeXinChun(Bot):
 
         if num:
             num = int(num)
+            self.current_item = num
             self.set_session_attribute("current_item", num, -1)
             if num == 1:
                 index = int(math.floor(random.random() * len(self.zhishi.get_datas())))
