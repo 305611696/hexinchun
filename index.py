@@ -25,6 +25,7 @@ class HeXinChun(Bot):
         self.list = [{"name": "小知识", "image": "image"}, {"name": "小菜谱", "image": "image"}]
         self.current_item = self.get_session_attribute("current_item", -1)
         self.zhishi = Zhishi()
+        self.caipu = Caipu()
         self.add_launch_handler(self.launch_request)
         self.add_intent_handler('iling.backlist', self.get_to_list)
         self.add_intent_handler('iling.lbxz', self.get_select_item)
