@@ -38,6 +38,9 @@ class HeXinChun(Bot):
         打开调用名
         """
         self.wait_answer()
+
+        self.current_item = -1
+        self.set_session_attribute("current_item", -1, -1)
         # template = BodyTemplate1()
         # template.set_title(self.title)
         # template.set_plain_text_content('欢迎进入'+self.title)
@@ -61,6 +64,8 @@ class HeXinChun(Bot):
         返回列表
         """
         self.wait_answer()
+        self.current_item = -1
+        self.set_session_attribute("current_item", -1, -1)
         list_template = self.get_list()
         render_template = RenderTemplate(list_template)
         return {
@@ -109,36 +114,29 @@ class HeXinChun(Bot):
         item = self.get_slots('list')
 
         if num:
-            num = int(num)
-            self.current_item = num
-            self.set_session_attribute("current_item", num, -1)
-            if num == 1:
-                index = int(math.floor(random.random() * len(self.zhishi.get_datas())))
-                self.set_session_attribute("zhishi_data", index, 0)
-                zhishi_data = self.zhishi.get_datas()[index]
-                render_template = self.get_template(zhishi_data)
-                return {
-                    'directives': [render_template],
-                    'outputSpeech': zhishi_data
-                }
-            elif num == 2:
-                caipu_data = self.zhishi.get_datas()[math.floor(random.random() * len(self.zhishi.get_datas()))]
-                render_template = self.get_template(caipu_data)
-                return {
-                    'directives': [render_template],
-                    'outputSpeech': caipu_data
-                }
 
+            num = int(num)
+            if self.current_item == -1:
+                self.current_item = num
+                self.set_session_attribute("current_item", num, -1)
+                if num == 1:
+                    return self.get_zhishi()
+                elif num == 2:
+                    caipu_data = self.zhishi.get_datas()[math.floor(random.random() * len(self.zhishi.get_datas()))]
+                    render_template = self.get_template(caipu_data)
+                    return {
+                        'directives': [render_template],
+                        'outputSpeech': caipu_data
+                    }
+            elif self.current_item == 1:
+                return self.get_zhishi('=', num)
         else:
 
             if item == "小知识":
-                content = item
-                render_template = self.get_template(content)
-                return {
-                    'directives': [render_template],
-                    'outputSpeech': content
-                }
+                self.set_session_attribute("current_item", 1, -1)
+                return self.get_zhishi()
             elif item == "小菜谱":
+                self.set_session_attribute("current_item", 2, -1)
                 content = item
                 render_template = self.get_template(content)
                 return {
@@ -157,42 +155,39 @@ class HeXinChun(Bot):
     def get_next(self):
         self.wait_answer()
         if self.current_item == 1:
-            index = self.get_session_attribute("zhishi_data", 0)
-            index += 1
-            if index > len(self.zhishi.get_datas()):
-                index = int(math.floor(random.random() * len(self.zhishi.get_datas())))
-            self.set_session_attribute("zhishi_data", index, 0)
-            zhishi_data = self.zhishi.get_datas()[index]
-            render_template = self.get_template(zhishi_data)
-            return {
-                'directives': [render_template],
-                'outputSpeech': zhishi_data
-            }
+            return self.get_zhishi('+')
         else:
             pass
 
     def get_previous(self):
         self.wait_answer()
         if self.current_item == 1:
-            index = self.get_session_attribute("zhishi_data", 0)
-
-            if index > 0:
-                index -= 1
-            else:
-                index = math.floor(random.random() * len(self.zhishi.get_datas()))
-            self.set_session_attribute("zhishi_data", index, 0)
-            zhishi_data = self.zhishi.get_datas()[index]
-            render_template = self.get_template(zhishi_data)
-            return {
-                'directives': [render_template],
-                'outputSpeech': zhishi_data
-            }
+            return self.get_zhishi('-')
         else:
             pass
 
     def get_default(self):
 
         pass
+
+    def get_zhishi(self, tag='random', num=0):
+        index = self.get_session_attribute("zhishi_data", 0)
+        if tag == '+':
+            index += 1
+        elif tag == '-':
+            index -= 1
+        elif tag == '=':
+            index = num
+        else:
+            index = int(math.floor(random.random() * len(self.zhishi.get_datas())))
+
+        _index, zhishi_data = self.zhishi.get_data(index)
+        self.set_session_attribute("zhishi_data", _index, 0)
+        render_template = self.get_template(zhishi_data)
+        return {
+            'directives': [render_template],
+            'outputSpeech': zhishi_data
+        }
 
     def get_template(self, content):
         template = BodyTemplate1()

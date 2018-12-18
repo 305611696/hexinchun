@@ -49,6 +49,11 @@ class Zhishi(object):
     def get_datas(self):
         return self.datas
 
+    def get_data(self, _index):
+        if _index > len(self.datas) or _index < 0:
+            _index = int(math.floor(random.random() * len(self.datas)))
+        return _index, self.datas[_index]
+
 
 if __name__ == "__main__":
     zhishi = Zhishi()
