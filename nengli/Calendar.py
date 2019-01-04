@@ -3,6 +3,7 @@
 # date: '2019/1/4 0004 12:43'
 
 import datetime
+import calendar
 
 
 class Calendar(object):
@@ -29,27 +30,29 @@ class Calendar(object):
 
     def get_calendar(self, year=datetime.datetime.now().year, month=datetime.datetime.now().month):  # 显示当前月
 
-        year, month = year, month
         space_num = self.total_day(year, month) % 7 + 1
         # print("空格数",space_num)
         # print("星期",totalDay(year, month) % 7 + 1,"开始")
-        _calendar = u"\n\u3000日\u3000一\u3000二\u3000三\u3000四\u3000五\u3000六\n"
+        _calendar = u"\u3000\u3000\u3000\u3000\u3000" + str(year) + "年" + str(month) + "月"
+        _calendar += u"\n周首日（周日）\n"
+        _year, _month = year, month
+        if _month == 1:
+            _year -= 1
+            _month = 12
+        else:
+            _month -= 1
+        _last_month_days = calendar.monthrange(_year, _month)[1]
         for i in range(1, self.month_day(year, month) + 1):
             if i == 1:
-                for j in range(space_num % 7):
-                    _calendar += u"\u3000\u3000"
+                for j in reversed(range(space_num % 7)):
+                    _calendar += ("%02d " % (_last_month_days - j))
             if i == int(datetime.datetime.now().day) and month == datetime.datetime.now().month:
-                if i < 10:
-                    _calendar += "\u30000%d)" % i
-                else:
-                    _calendar += "\u3000%2d)" % i
+                _calendar += "%02d) " % i
             else:
-                if i < 10:
-                    _calendar += "\u30000%d" % i
-                else:
-                    _calendar += "\u3000%2d" % i
+                _calendar += "%02d " % i
 
             if (i + space_num) % 7 == 0:
+                _calendar = _calendar[:-1]
                 _calendar += "\n"
         return _calendar
 
@@ -59,6 +62,7 @@ class Calendar(object):
     def get_month(self):
         return datetime.datetime.now().month
 
+
 if __name__ == "__main__":
     _calender = Calendar()
-    print(_calender.get_calendar(2019, 1))
+    print(_calender.get_calendar(2019, 2))

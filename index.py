@@ -145,7 +145,9 @@ class HeXinChun(Bot):
                         'outputSpeech': caipu_data
                     }
                 elif num == 3:
-                    _calendar = "今天是" + self.zhinan.get_current_date()
+                    _calendar = "今天是" + self.zhinan.get_current_date() + "可以对我说下一个,查看次月日历"
+                    self.set_session_attribute("_year", self.calendar.get_year(), self.calendar.get_year())
+                    self.set_session_attribute("_month", self.calendar.get_month(), self.calendar.get_month())
                     render_template = self.get_template(self.calendar.get_calendar(), self.calendar_bg)
                     return {
                         'directives': [render_template],
@@ -169,7 +171,9 @@ class HeXinChun(Bot):
                     'outputSpeech': caipu_data
                 }
             elif item == "小日历":
-                _calendar = "今天是" + self.zhinan.get_current_date()
+                _calendar = "今天是" + self.zhinan.get_current_date() + "可以对我说下一个,查看次月日历"
+                self.set_session_attribute("_year", self.calendar.get_year(), self.calendar.get_year())
+                self.set_session_attribute("_month", self.calendar.get_month(), self.calendar.get_month())
                 render_template = self.get_template(self.calendar.get_calendar(), self.calendar_bg)
                 return {
                     'directives': [render_template],
@@ -197,13 +201,15 @@ class HeXinChun(Bot):
                 'outputSpeech': caipu_data
             }
         elif self.current_item == 3:
-            _year = self.calendar.get_year()
-            _month = self.calendar.get_month()
+            _year = self.get_session_attribute("_year", self.calendar.get_year())
+            _month = self.get_session_attribute("_month", self.calendar.get_month())
             if _month == 12:
                 _year += 1
                 _month = 1
             else:
                 _month += 1
+            self.set_session_attribute("_year", _year, self.calendar.get_year())
+            self.set_session_attribute("_month", _month, self.calendar.get_month())
             render_template = self.get_template(self.calendar.get_calendar(_year, _month), self.calendar_bg)
             return {
                 'directives': [render_template]
@@ -224,13 +230,15 @@ class HeXinChun(Bot):
                 'outputSpeech': caipu_data
             }
         elif self.current_item == 3:
-            _year = self.calendar.get_year()
-            _month = self.calendar.get_month()
+            _year = self.get_session_attribute("_year", self.calendar.get_year())
+            _month = self.get_session_attribute("_month", self.calendar.get_month())
             if _month == 1:
                 _year -= 1
                 _month = 12
             else:
                 _month -= 1
+            self.set_session_attribute("_year", _year, self.calendar.get_year())
+            self.set_session_attribute("_month", _month, self.calendar.get_month())
             render_template = self.get_template(self.calendar.get_calendar(_year, _month), self.calendar_bg)
             return {
                 'directives': [render_template]
