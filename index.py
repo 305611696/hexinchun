@@ -25,6 +25,7 @@ class HeXinChun(Bot):
         self.list = [{"name": "小知识", "image": "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/list_zhishi.png?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2018-12-22T16%3A07%3A55Z%2F-1%2F%2Fc707c5d1fb746a05537b4d7ed1eb764c55a08f6cfe645f808a705b2a75553524"},
                      {"name": "小菜谱", "image": "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/list_meishi.png?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2018-12-22T16%3A07%3A55Z%2F-1%2F%2Fed79b5d3569f90ce32a1dbc0511fbf75931849ee6a9cad2a8a54309a2d00ae9b"}]
         self.current_item = self.get_session_attribute("current_item", -1)
+        self.zhinan = Zhinan()
         self.zhishi = Zhishi()
         self.zhishi_bg = "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/bg_zhishi.jpg?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2018-12-22T15%3A55%3A51Z%2F-1%2F%2F6fe6a206c5b1408510053d346d8bcde43c2d50d23eddd52def23dbe98c774977"
         self.caipu = Caipu()
@@ -46,11 +47,26 @@ class HeXinChun(Bot):
 
         self.current_item = -1
         self.set_session_attribute("current_item", -1, -1)
+
         list_template = self.get_list()
+        v_day = self.zhinan.d_value(self.zhinan.get_current_date())
+        content = r"欢迎来到贺新春，"
+        if v_day > 0:
+            content += "距离大年初一还有" + str(v_day) + "天。"
+            if self.zhinan.has_key(self.zhinan.get_current_date()):
+                content += self.zhinan.get_data(self.zhinan.get_current_date())
+        elif v_day == 0:
+            content += "今天是" + self.zhinan.get_data(self.zhinan.get_current_date())
+        else:
+            if self.zhinan.has_key(self.zhinan.get_current_date()):
+                content += "今天是" + self.zhinan.get_data(self.zhinan.get_current_date())
+            content += "虽然新年已经过去但是也可以了解一些新年的习俗的。"
+
+        content += "请问要了解哪些内容呢？可以对我说第几个!"
         render_template = RenderTemplate(list_template)
         return {
             'directives': [render_template],
-            'outputSpeech': r'欢迎来到贺新春，请选择要了解的内容，可以对我说第几个'
+            'outputSpeech': content
         }
 
     def get_to_list(self):
