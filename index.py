@@ -13,6 +13,7 @@ from dueros.directive.Display.template.ListTemplateItem import ListTemplateItem
 from nengli.Zhinan import Zhinan
 from nengli.Zhishi import Zhishi
 from nengli.Caipu import Caipu
+from nengli.Calendar import Calendar
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -23,8 +24,12 @@ class HeXinChun(Bot):
         super(HeXinChun, self).__init__(request_data)
         self.title = "贺新春"
         self.list = [{"name": "小知识", "image": "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/list_zhishi.png?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2018-12-22T16%3A07%3A55Z%2F-1%2F%2Fc707c5d1fb746a05537b4d7ed1eb764c55a08f6cfe645f808a705b2a75553524"},
-                     {"name": "小菜谱", "image": "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/list_meishi.png?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2018-12-22T16%3A07%3A55Z%2F-1%2F%2Fed79b5d3569f90ce32a1dbc0511fbf75931849ee6a9cad2a8a54309a2d00ae9b"}]
+                     {"name": "小菜谱", "image": "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/list_meishi.png?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2018-12-22T16%3A07%3A55Z%2F-1%2F%2Fed79b5d3569f90ce32a1dbc0511fbf75931849ee6a9cad2a8a54309a2d00ae9b"},
+                     {"name": "小日历", "image": "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/list_meishi.png?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2018-12-22T16%3A07%3A55Z%2F-1%2F%2Fed79b5d3569f90ce32a1dbc0511fbf75931849ee6a9cad2a8a54309a2d00ae9b"},
+                     ]
         self.current_item = self.get_session_attribute("current_item", -1)
+        self.calendar = Calendar()
+        self.calendar_bg = "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/bg_zhishi.jpg?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2018-12-22T15%3A55%3A51Z%2F-1%2F%2F6fe6a206c5b1408510053d346d8bcde43c2d50d23eddd52def23dbe98c774977"
         self.zhinan = Zhinan()
         self.zhishi = Zhishi()
         self.zhishi_bg = "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/bg_zhishi.jpg?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2018-12-22T15%3A55%3A51Z%2F-1%2F%2F6fe6a206c5b1408510053d346d8bcde43c2d50d23eddd52def23dbe98c774977"
@@ -139,6 +144,14 @@ class HeXinChun(Bot):
                         'directives': [render_template],
                         'outputSpeech': caipu_data
                     }
+                elif num == 3:
+                    _calendar = "今天是" + self.zhinan.get_current_date()
+                    render_template = self.get_template(self.calendar.get_calendar(), self.calendar_bg)
+                    return {
+                        'directives': [render_template],
+                        'outputSpeech': _calendar
+                    }
+
             elif self.current_item == 1:
                 return self.get_zhishi('=', num)
         else:
@@ -154,6 +167,13 @@ class HeXinChun(Bot):
                 return {
                     'directives': [render_template],
                     'outputSpeech': caipu_data
+                }
+            elif item == "小日历":
+                _calendar = "今天是" + self.zhinan.get_current_date()
+                render_template = self.get_template(self.calendar.get_calendar(), self.calendar_bg)
+                return {
+                    'directives': [render_template],
+                    'outputSpeech': _calendar
                 }
             else:
                 render_template = self.get_template(r'请问你选择的是第几个呢？', self.zhishi_bg)
@@ -176,6 +196,18 @@ class HeXinChun(Bot):
                 'directives': [render_template],
                 'outputSpeech': caipu_data
             }
+        elif self.current_item == 3:
+            _year = self.calendar.get_year()
+            _month = self.calendar.get_month()
+            if _month == 12:
+                _year += 1
+                _month = 1
+            else:
+                _month += 1
+            render_template = self.get_template(self.calendar.get_calendar(_year, _month), self.calendar_bg)
+            return {
+                'directives': [render_template]
+            }
         else:
             pass
 
@@ -190,6 +222,18 @@ class HeXinChun(Bot):
             return {
                 'directives': [render_template],
                 'outputSpeech': caipu_data
+            }
+        elif self.current_item == 3:
+            _year = self.calendar.get_year()
+            _month = self.calendar.get_month()
+            if _month == 1:
+                _year -= 1
+                _month = 12
+            else:
+                _month -= 1
+            render_template = self.get_template(self.calendar.get_calendar(_year, _month), self.calendar_bg)
+            return {
+                'directives': [render_template]
             }
         else:
             pass
