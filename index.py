@@ -25,7 +25,7 @@ class HeXinChun(Bot):
         self.title = "贺新春"
         self.list = [{"name": "小知识", "image": "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/list_zhishi.png?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2018-12-22T16%3A07%3A55Z%2F-1%2F%2Fc707c5d1fb746a05537b4d7ed1eb764c55a08f6cfe645f808a705b2a75553524"},
                      {"name": "小菜谱", "image": "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/list_meishi.png?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2018-12-22T16%3A07%3A55Z%2F-1%2F%2Fed79b5d3569f90ce32a1dbc0511fbf75931849ee6a9cad2a8a54309a2d00ae9b"},
-                     {"name": "小日历", "image": "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/list_meishi.png?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2018-12-22T16%3A07%3A55Z%2F-1%2F%2Fed79b5d3569f90ce32a1dbc0511fbf75931849ee6a9cad2a8a54309a2d00ae9b"},
+                     {"name": "小日历", "image": "http://dbp-resource.gz.bcebos.com/a68dacbb-a28c-83c8-354e-15c45bfea2d1/list_rili.png?authorization=bce-auth-v1%2Fa4d81bbd930c41e6857b989362415714%2F2019-01-05T12%3A21%3A56Z%2F-1%2F%2Fec4e8cfdb305e19396c521952c24937d4d16513541f04308e7bb1de9f11e0851"},
                      ]
         self.current_item = self.get_session_attribute("current_item", -1)
         self.calendar = Calendar()
