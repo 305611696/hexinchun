@@ -42,6 +42,7 @@ class HeXinChun(Bot):
         self.add_intent_handler('ai.dueros.common.next_intent', self.get_next)
         self.add_intent_handler('ai.dueros.common.previous_intent', self.get_previous)
         self.add_intent_handler('ai.dueros.common.default_intent', self.get_default)
+        self.add_event_listener('Display.ElementSelected', self.get_select_item_click)
         self.add_session_ended_handler(self.ended_request)
 
     def launch_request(self):
@@ -117,6 +118,38 @@ class HeXinChun(Bot):
             list_template.add_item(item)
 
         return list_template
+
+    def get_select_item_click(self, req):
+        """
+        选择指定能力通过编号
+        """
+        self.wait_answer()
+        # 直接选择某一个Item
+        token = int(req['request']['token'])
+
+        self.current_item = token
+        self.set_session_attribute("current_item", token, -1)
+        if token == 0:
+            return self.get_zhishi()
+        elif token == 1:
+            # caipu_data = '想知道哪些春节美食的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
+            caipu_data = '目前只收录了一些馅料饺子的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
+            render_template = self.get_template(caipu_data, self.caipu_bg)
+            return {
+                'directives': [render_template],
+                'outputSpeech': caipu_data
+            }
+        elif token == 2:
+            _calendar = "今天是" + self.zhinan.get_current_date() + "可以对我说下一个,查看次月日历"
+            self.set_session_attribute("_year", self.calendar.get_year(), self.calendar.get_year())
+            self.set_session_attribute("_month", self.calendar.get_month(), self.calendar.get_month())
+            render_template = self.get_template(self.calendar.get_calendar(), self.calendar_bg)
+            return {
+                'directives': [render_template],
+                'outputSpeech': _calendar
+            }
+
+
 
     def get_select_item(self):
         """
