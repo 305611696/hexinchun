@@ -125,7 +125,7 @@ class HeXinChun(Bot):
         """
         self.wait_answer()
         # 直接选择某一个Item
-        token = int(req['request']['token'])
+        token = int(req['token'])
 
         self.current_item = token
         self.set_session_attribute("current_item", token, -1)
