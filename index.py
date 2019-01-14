@@ -133,7 +133,7 @@ class HeXinChun(Bot):
             return self.get_zhishi()
         elif token == 1:
             # caipu_data = '想知道哪些春节美食的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
-            caipu_data = '目前只收录了一些馅料饺子的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
+            caipu_data = '目前只收录了'+str(len(self.caipu.get_datas()))+'种馅料饺子的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
             render_template = self.get_template(caipu_data, self.caipu_bg)
             return {
                 'directives': [render_template],
@@ -171,7 +171,7 @@ class HeXinChun(Bot):
                     return self.get_zhishi()
                 elif num == 2:
                     # caipu_data = '想知道哪些春节美食的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
-                    caipu_data = '目前只收录了一些馅料饺子的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
+                    caipu_data = '目前只收录了'+str(len(self.caipu.get_datas()))+'种馅料饺子的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
                     render_template = self.get_template(caipu_data, self.caipu_bg)
                     return {
                         'directives': [render_template],
@@ -189,6 +189,22 @@ class HeXinChun(Bot):
 
             elif self.current_item == 1:
                 return self.get_zhishi('=', num)
+            elif self.current_item == 2:
+                # caipu_data = '想知道哪些春节美食的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
+                index, caipu_data = self.caipu.get_data_and_index(num)
+                self.set_session_attribute("caipu_index", index, 0)
+                if not caipu_data:
+                    caipu_data = '目前只收录了'+str(len(self.caipu.get_datas()))+'种馅料饺子的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
+                render_template = self.get_template(caipu_data, self.caipu_bg)
+                return {
+                    'directives': [render_template],
+                    'outputSpeech': caipu_data
+                }
+            else:
+                result_data = '我太笨了没有理解您的表达。'
+                return {
+                    'outputSpeech': result_data
+                }
         else:
 
             if item == "小知识":
@@ -197,13 +213,14 @@ class HeXinChun(Bot):
             elif item == "小菜谱":
                 self.set_session_attribute("current_item", 2, -1)
                 # caipu_data = '想知道哪些春节美食的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
-                caipu_data = '目前只收录了一些馅料饺子的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
+                caipu_data = '目前只收录了'+str(len(self.caipu.get_datas()))+'种馅料饺子的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
                 render_template = self.get_template(caipu_data, self.caipu_bg)
                 return {
                     'directives': [render_template],
                     'outputSpeech': caipu_data
                 }
             elif item == "小日历":
+                self.set_session_attribute("current_item", 3, -1)
                 _calendar = "今天是" + self.zhinan.get_current_date() + "可以对我说下一个,查看次月日历"
                 self.set_session_attribute("_year", self.calendar.get_year(), self.calendar.get_year())
                 self.set_session_attribute("_month", self.calendar.get_month(), self.calendar.get_month())
@@ -226,8 +243,11 @@ class HeXinChun(Bot):
         if self.current_item == 1:
             return self.get_zhishi('+')
         elif self.current_item == 2:
+            caipu_index = self.get_session_attribute('caipu_index', 0)
+            caipu_index = int(caipu_index) + 1
+            index, caipu_data = self.caipu.get_data_and_index(caipu_index)
+            self.set_session_attribute("caipu_index", index, 0)
             # caipu_data = '想知道更多春节美食的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
-            caipu_data = '目前只收录了一些馅料饺子的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
             render_template = self.get_template(caipu_data, self.caipu_bg)
             return {
                 'directives': [render_template],
@@ -255,8 +275,11 @@ class HeXinChun(Bot):
         if self.current_item == 1:
             return self.get_zhishi('-')
         elif self.current_item == 2:
+            caipu_index = self.get_session_attribute('caipu_index', 0)
+            caipu_index = int(caipu_index) - 1
+            index, caipu_data = self.caipu.get_data_and_index(caipu_index)
+            self.set_session_attribute("caipu_index", index, 0)
             # caipu_data = '想知道更多春节美食的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
-            caipu_data = '目前只收录了一些馅料饺子的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
             render_template = self.get_template(caipu_data, self.caipu_bg)
             return {
                 'directives': [render_template],
@@ -288,7 +311,7 @@ class HeXinChun(Bot):
             }
         elif self.current_item == 2:
             # caipu_data = '想知道更多春节美食的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
-            caipu_data = '我太笨了没有理解您的表达。目前只收录了一些馅料饺子的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
+            caipu_data = '我太笨了没有理解您的表达。目前只收录了'+str(len(self.caipu.get_datas()))+'种馅料饺子的做法，比如你可以对我说：韭菜鸡蛋饺子怎么做？'
             return {
                 'outputSpeech': caipu_data
             }

@@ -2,6 +2,8 @@
 # author: wt
 # date: '2018/12/17 0017 14:14'
 
+import math
+import random
 
 class Caipu(object):
 
@@ -209,5 +211,22 @@ class Caipu(object):
     def get_datas(self):
         return self.datas
 
+    def get_data_by_index(self, index):
+        if index > len(self.datas) or index < 0:
+            return None
+        for i, k in enumerate(self.datas.keys()):
+            if i == index:
+                return self.datas[k]
+
     def get_data(self, key):
         return self.datas[key]
+
+    def get_data_and_index(self, _index):
+        if _index > len(self.datas) or _index < 0:
+            _index = int(math.floor(random.random() * len(self.datas)))
+        return _index, self.get_data_by_index(_index)
+
+
+if __name__ == "__main__":
+    caipu = Caipu()
+    print(caipu.get_data_and_index(100))
